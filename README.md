@@ -11,6 +11,7 @@ This pipeline preprocesses raw data, evaluates record counts, conditionally perf
 ⚙️**Workflow**
 
 1️⃣ Run preprocessing AWS Glue (PySpark) job
+
 2️⃣ Use AWS Lambda to read the processed record count
 3️⃣ Conditionally trigger an encryption Glue job using Step Functions Choice states
 4️⃣ Update the AWS Glue Data Catalog

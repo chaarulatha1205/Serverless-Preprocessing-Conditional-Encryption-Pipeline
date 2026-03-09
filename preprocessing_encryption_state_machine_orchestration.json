@@ -1,0 +1,70 @@
+{
+  "Comment": "Serverless preprocessing and conditional encryption pipeline",
+  "StartAt": "PreprocessingJob",
+  "States": {
+    "PreprocessingJob": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "preprocessing_job",
+        "Arguments": {
+          "--bucket_name.$": "$.bucket_name",
+          "--file_key.$": "$.file_key",
+          "--batch_id.$": "$.batch_id",
+          "--timestamp.$": "$.timestamp"
+        }
+      },
+      "ResultPath": "$.preprocessResult",
+      "Next": "ReadRecordCount"
+    },
+    "ReadRecordCount": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "read_record_count",
+        "Payload": {
+          "batch_id.$": "$.batch_id"
+        }
+      },
+      "ResultPath": "$.recordResult",
+      "Next": "CheckRecordCount"
+    },
+    "CheckRecordCount": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.recordResult.Payload.record_count",
+          "NumericGreaterThan": 0,
+          "Next": "EncryptionJob"
+        }
+      ],
+      "Default": "SuccessState"
+    },
+    "EncryptionJob": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "encryption_job",
+        "Arguments": {
+          "--batch_id.$": "$.batch_id"
+        }
+      },
+      "ResultPath": "$.encryptionResult",
+      "Next": "CatalogLambda"
+    },
+    "CatalogLambda": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "catalog_lambda",
+        "Payload": {
+          "batch_id.$": "$.batch_id"
+        }
+      },
+      "End": true
+    },
+    "SuccessState": {
+      "Type": "Succeed"
+    }
+  }
+}

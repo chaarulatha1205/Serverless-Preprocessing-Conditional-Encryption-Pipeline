@@ -4,11 +4,11 @@
 
 This project started with designing and implementing a serverless batch data pipeline using AWS Step Functions, AWS Glue, and AWS Lambda to efficiently process and manage data workflows.
 
-🔹 Project Overview
+🔹**Project Overview**
 
 This pipeline preprocesses raw data, evaluates record counts, conditionally performs encryption, and updates the AWS Glue Data Catalog. The orchestration ensures efficient processing while avoiding unnecessary compute costs.
 
-⚙️ Workflow
+⚙️**Workflow**
 
 1️⃣ Run preprocessing AWS Glue (PySpark) job
 2️⃣ Use AWS Lambda to read the processed record count
@@ -17,7 +17,7 @@ This pipeline preprocesses raw data, evaluates record counts, conditionally perf
 5️⃣ Gracefully exit if no data is present
 
 
-🛠 Tech Stack
+🛠**Tech Stack**
 
 • AWS Step Functions
 • AWS Glue (PySpark)
@@ -25,7 +25,7 @@ This pipeline preprocesses raw data, evaluates record counts, conditionally perf
 • Amazon S3
 • AWS Glue Data Catalog
 
-✨ *Key Features*
+✨**Key Features**
 
 ✔ Conditional execution using Choice states
 ✔ Fully serverless architecture (no infrastructure management)
